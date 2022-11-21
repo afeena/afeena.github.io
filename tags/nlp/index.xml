@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Evgeniia Tokarchuk</title>
-    <link>https://evgeniia.tokarch.uk/</link>
-    <description>Recent content on Evgeniia Tokarchuk</description>
+    <title>nlp on Evgeniia Tokarchuk</title>
+    <link>https://evgeniia.tokarch.uk/tags/nlp/</link>
+    <description>Recent content in nlp on Evgeniia Tokarchuk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/nlp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Extending Fairseq: Incomplete Guide</title>
       <link>https://evgeniia.tokarch.uk/blog/fairseq/</link>
@@ -16,15 +16,6 @@
       <description>Table of content Fairseq How To Easy Mode Not So Easy Mode Fairseq How To Before we start with extension, let&amp;rsquo;s try to understand how fairseq training works for seq2seq models. In this tutorial I will use only hydra-train module to make it possible load yaml configs.
 Install fairseq Follow installation guide on github page.
 Training with Hydra Suppose you want to train translation model using hydra training. The command syntax is the following:</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://evgeniia.tokarch.uk/posts/about/</link>
-      <pubDate>Tue, 27 Sep 2022 22:43:20 +0200</pubDate>
-      
-      <guid>https://evgeniia.tokarch.uk/posts/about/</guid>
-      <description></description>
     </item>
     
   </channel>
