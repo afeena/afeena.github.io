@@ -9,10 +9,10 @@
     <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Extending Fairseq: Incomplete Guide</title>
-      <link>https://evgeniia.tokarch.uk/blog/fairseq-extension-incomplete/</link>
+      <link>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</link>
       <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://evgeniia.tokarch.uk/blog/fairseq-extension-incomplete/</guid>
+      <guid>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</guid>
       <description>Table of content Fairseq How To Easy Mode Not So Easy Mode Fairseq How To Before we start with extension, let&amp;rsquo;s try to understand how fairseq training works for seq2seq models. In this tutorial I will use only hydra-train module to make it possible load yaml configs.
 Install fairseq Follow installation guide on github page.
 Training with Hydra Suppose you want to train translation model using hydra training. The command syntax is the following:</description>
