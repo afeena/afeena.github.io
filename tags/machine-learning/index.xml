@@ -6,23 +6,16 @@
     <description>Recent content in machine-learning on Evgeniia Tokarchuk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 Jun 2019 16:04:19 -0700</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>7 Ways To Keep Your ML Growing Without Burning The Midnight Oil</title>
-      <link>https://evgeniia.tokarch.uk/blog/blog2/</link>
-      <pubDate>Fri, 07 Jun 2019 16:04:19 -0700</pubDate>
+      <title>Extending Fairseq: Incomplete Guide</title>
+      <link>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</link>
+      <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://evgeniia.tokarch.uk/blog/blog2/</guid>
-      <description>Nulla fermentum blandit metus sit amet congue. Nunc hendrerit eleifend magna, quis posuere nulla eleifend eget. Pellentesque quis nulla eu massa facilisis sodales in quis urna. Vestibulum aliquam metus id risus volutpat iaculis. Sed malesuada nunc cursus risus consectetur suscipit. Quisque sit amet leo mattis, sagittis purus eu, tristique sapien. Vestibulum gravida dictum aliquam. Etiam magna neque, tempus et aliquet sed, sollicitudin sed tellus. Sed euismod, lorem eget aliquet ultrices, nisl eros hendrerit nunc, in gravida augue leo id diam.</description>
-    </item>
-    
-    <item>
-      <title>Secrets To ML – Even In This Down Economy</title>
-      <link>https://evgeniia.tokarch.uk/blog/blog1/</link>
-      <pubDate>Fri, 18 May 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://evgeniia.tokarch.uk/blog/blog1/</guid>
-      <description>Nulla fermentum blandit metus sit amet congue. Nunc hendrerit eleifend magna, quis posuere nulla eleifend eget. Pellentesque quis nulla eu massa facilisis sodales in quis urna. Vestibulum aliquam metus id risus volutpat iaculis. Sed malesuada nunc cursus risus consectetur suscipit. Quisque sit amet leo mattis, sagittis purus eu, tristique sapien. Vestibulum gravida dictum aliquam. Etiam magna neque, tempus et aliquet sed, sollicitudin sed tellus. Sed euismod, lorem eget aliquet ultrices, nisl eros hendrerit nunc, in gravida augue leo id diam.</description>
+      <guid>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</guid>
+      <description>Table of content Fairseq How To Easy Mode Not So Easy Mode Fairseq How To Before we start with extension, let&amp;rsquo;s try to understand how fairseq training works for seq2seq models. In this tutorial I will use only hydra-train module to make it possible load yaml configs.
+Install fairseq Follow installation guide on github page.
+Training with Hydra Suppose you want to train translation model using hydra training. The command syntax is the following:</description>
     </item>
     
   </channel>
