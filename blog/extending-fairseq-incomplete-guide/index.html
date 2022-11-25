@@ -78,7 +78,8 @@
 <pre tabindex="0"><code class="language-bash!" data-lang="bash!">uname@host ~ $ fairseq-hydra-train --config-dir . --config-name config.yaml
 </code></pre><p>Obviously you need to prepare <code>config.yaml</code> first. All missing parameters will be reaplced by defaults. Defaults can be find at <code>fairseq/dataclass/configs.py</code>
 You can also see avaliable parameters there.</p>
-<!-- raw HTML omitted -->
+<details>
+    <summary> <b>Translation Config Example </b></summary>
 <pre tabindex="0"><code class="language-yaml!" data-lang="yaml!"># @package _group_
 task:
   _name: translation
@@ -122,7 +123,7 @@ common:
   wandb_project: ?
   log_format: simple
   log_interval: 100
-</code></pre><!-- raw HTML omitted -->
+</code></pre></details>
 <p>You can replace or add parameters <strong>on the fly</strong> while keeping base config. If parameter not in a base config, use <code>+</code> to add it:</p>
 <pre tabindex="0"><code class="language-bash!" data-lang="bash!">#checkpoint.no_save is not in config.yaml so add +
 #common.wandb_project is in base config, so no need to add +
