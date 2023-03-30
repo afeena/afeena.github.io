@@ -44,7 +44,56 @@
     
 
 <h3>
-    <a class="title" href="/blog/extending-fairseq-incomplete-guide/">Extending Fairseq: Incomplete Guide</a>
+    <a class="title" href="/blog/memory-optimization-for-kl-loss-calculation-in-pytorch/memory-optimization-for-kl-loss-calculation-in-pytorch/">One example of memory optimization for KL-loss calculation in pytorch</a>
+</h3>
+
+<div class="reading_time secondary_font text-muted ">
+    <span>
+        Mar 30 2023 · 4 min read
+    </span>
+
+</div>
+
+
+
+
+<div class="tags_navigation">
+    
+    <a class="tag" href="/tags/pytorch/">#pytorch</a>
+    
+    <a class="tag" href="/tags/memory/">#memory</a>
+    
+    <a class="tag" href="/tags/fairseq/">#fairseq</a>
+    
+    <a class="tag" href="/tags/nlp/">#nlp</a>
+    
+    <a class="tag" href="/tags/machine-learning/">#machine-learning</a>
+    
+</div>
+
+
+    <div>Memory usage is a common issue for large ML models. Especially in academia, we have to use resources wisely and make the most out of resources available. While working on my mixture model’s KL-objective, I have to make some less common optimization to reduce memory usage.
+Setup Decoder outputs a large matrix $O$ with dimensionality $(M \times B \times L \times D)$ where $M$ is the number of clusters, $B$ is a batch size, $L$ is a sequence lengths and $D$ is model output dimension.</div>
+
+
+
+<div class="read_more">
+    <a href="/blog/memory-optimization-for-kl-loss-calculation-in-pytorch/memory-optimization-for-kl-loss-calculation-in-pytorch/">Read More…</a>
+</div>
+
+
+
+    
+</p>
+
+
+
+<p>
+    
+    
+
+<h3>
+    <a class="title" href="/blog/extending-fairseq-incomplete-guide/extending-fairseq-incomplete-guide/">Extending Fairseq: Incomplete Guide</a>
 </h3>
 
 <div class="reading_time secondary_font text-muted ">
@@ -75,7 +124,7 @@ Training with Hydra Suppose you want to train translation model using hydra trai
 
 
 <div class="read_more">
-    <a href="/blog/extending-fairseq-incomplete-guide/">Read More…</a>
+    <a href="/blog/extending-fairseq-incomplete-guide/extending-fairseq-incomplete-guide/">Read More…</a>
 </div>
 
 
@@ -90,7 +139,7 @@ Training with Hydra Suppose you want to train translation model using hydra trai
 
 
 <footer class="mt-auto d-flex justify-content-center text-muted small secondary_font">
-    <span class="text-muted">Copyright (c) 2022, E Tokarchuk,
+    <span class="text-muted">Copyright (c) 2023, E Tokarchuk,
         <a class="text-muted" href="https://github.com/hadisinaee/avicenna" target="_blank"> created by Avicenna
             (MIT)</a>
     </span>

@@ -6,13 +6,23 @@
     <description>Recent content in fairseq on Evgeniia Tokarchuk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/fairseq/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 30 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/fairseq/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>One example of memory optimization for KL-loss calculation in pytorch</title>
+      <link>https://evgeniia.tokarch.uk/blog/memory-optimization-for-kl-loss-calculation-in-pytorch/memory-optimization-for-kl-loss-calculation-in-pytorch/</link>
+      <pubDate>Thu, 30 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://evgeniia.tokarch.uk/blog/memory-optimization-for-kl-loss-calculation-in-pytorch/memory-optimization-for-kl-loss-calculation-in-pytorch/</guid>
+      <description>Memory usage is a common issue for large ML models. Especially in academia, we have to use resources wisely and make the most out of resources available. While working on my mixture model’s KL-objective, I have to make some less common optimization to reduce memory usage.
+Setup Decoder outputs a large matrix $O$ with dimensionality $(M \times B \times L \times D)$ where $M$ is the number of clusters, $B$ is a batch size, $L$ is a sequence lengths and $D$ is model output dimension.</description>
+    </item>
+    
     <item>
       <title>Extending Fairseq: Incomplete Guide</title>
-      <link>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</link>
+      <link>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/extending-fairseq-incomplete-guide/</link>
       <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/</guid>
+      <guid>https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/extending-fairseq-incomplete-guide/</guid>
       <description>Table of content Fairseq How To Easy Mode Not So Easy Mode Fairseq How To Before we start with extension, let&amp;rsquo;s try to understand how fairseq training works for seq2seq models. In this tutorial I will use only hydra-train module to make it possible load yaml configs.
 Install fairseq Follow installation guide on github page.
 Training with Hydra Suppose you want to train translation model using hydra training. The command syntax is the following:</description>
