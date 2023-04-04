@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>neural-machine-translation on Evgeniia Tokarchuk</title>
+    <link>https://evgeniia.tokarch.uk/tags/neural-machine-translation/</link>
+    <description>Recent content in neural-machine-translation on Evgeniia Tokarchuk</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 04 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/tags/neural-machine-translation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Neural Machine Translation</title>
+      <link>https://evgeniia.tokarch.uk/blog/neural-machine-translation/</link>
+      <pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://evgeniia.tokarch.uk/blog/neural-machine-translation/</guid>
+      <description>Disclaimer: this post is for my bachelor and master students at UvA, to give them introduction for PRACTICAL NMT from top to bottom. There is a gap between theory and practice, that is not always addressed by books and blogposts. And honestly I am a bit tired of explaining things every time (I am lazy, sue me).
+Introduction Since you are an informatics or ai program’s student, let’s assume you know something about machine learning, or maybe even machine translation.</description>
+    </item>
+    
+  </channel>
+</rss>

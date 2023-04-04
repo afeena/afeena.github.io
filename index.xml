@@ -6,7 +6,17 @@
     <description>Recent content on Evgeniia Tokarchuk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 30 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 04 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://evgeniia.tokarch.uk/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Neural Machine Translation</title>
+      <link>https://evgeniia.tokarch.uk/blog/neural-machine-translation/</link>
+      <pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://evgeniia.tokarch.uk/blog/neural-machine-translation/</guid>
+      <description>Disclaimer: this post is for my bachelor and master students at UvA, to give them introduction for PRACTICAL NMT from top to bottom. There is a gap between theory and practice, that is not always addressed by books and blogposts. And honestly I am a bit tired of explaining things every time (I am lazy, sue me).
+Introduction Since you are an informatics or ai program’s student, let’s assume you know something about machine learning, or maybe even machine translation.</description>
+    </item>
+    
     <item>
       <title>One example of memory optimization for KL-loss calculation in pytorch</title>
       <link>https://evgeniia.tokarch.uk/blog/memory-optimization-for-kl-loss-calculation-in-pytorch/</link>

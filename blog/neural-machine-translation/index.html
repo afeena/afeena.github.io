@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en-us"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&family=Noto+Serif+JP&family=Cormorant+Garamond&family=Libre+Baskerville&family=Source+Serif+Pro&family=Crimson+Text&family=Inter&family=Crimson+Pro&family=Literata&family=Ubuntu+Mono&family=Inter&family=Roboto">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    
+    
+
+    <title>Evgeniia Tokarchuk | Neural Machine Translation</title>
+
+
+    
+
+</head><body class="container d-flex flex-column min-vh-100">
+
+<div class="blog_nav_bar secondary_font ">
+    
+    
+    <a class="navbar-brand" href="/">about</a>
+    
+    
+    
+    <a class="navbar-brand" href="/blog">« all posts</a>
+    
+    
+</div>
+
+
+
+<h3>
+    <a class="title" href="/blog/neural-machine-translation/">Neural Machine Translation</a>
+</h3>
+
+<div class="reading_time secondary_font text-muted ">
+    <span>
+        Apr 4 2023 · 7 min read
+    </span>
+
+</div>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<div class="tags_navigation">
+    
+    <a class="tag" href="/tags/nlp/">#nlp</a>
+    
+    <a class="tag" href="/tags/neural-machine-translation/">#neural-machine-translation</a>
+    
+</div>
+
+
+
+<p><strong>Disclaimer</strong>: this post is for my bachelor and master students at UvA, to give them introduction for <em>PRACTICAL</em> NMT from top to bottom. There is a gap between theory and practice, that is not always addressed by books and blogposts. And honestly I am a bit tired of explaining things every time (I am lazy, sue me).</p>
+<h2 id="introduction">Introduction</h2>
+<p>Since you are an informatics or ai program’s student, let’s assume you know <em>something</em> about machine learning, or maybe even machine translation. You’ve heard about <a href="https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf">Transformer</a>. You probably read <a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> blog post. Maybe you even had NLP course (if not, see <a href="https://www.notion.so/Neural-Machine-Translation-81644e5bed304c19bf3f5d4012537499">resources</a>). You know <code>python</code> and <code>pytorch</code> (I hope). And now you have a task to train NMT system. You can of course write the code yourself. That’s tedious. So instead people tend to use ML frameworks such as <a href="https://github.com/facebookresearch/fairseq">fairseq</a>, <a href="https://huggingface.co/docs/transformers/index">hugging face transformers</a>, <a href="https://github.com/joeynmt/joeynmt">joeynmt</a> Here you can find <a href="https://machinetranslate.org/building/libraries-frameworks/">Good overview of the frameworks</a>.
+We will look into each part and see examples with <code>fairseq</code> framework. Why frameworks? Training/evaluation loops are common for seq2seq models, frameworks deal with it and also with the data loading and many more things. It’s not worth it to spend time writing your own code for routine tasks when you can focus on research part.</p>
+<p>To make things easier, we can split NMT pipeline into 3 parts and look at them separately:</p>
+<ul>
+<li>Pre-processing</li>
+<li>Training</li>
+<li>Generation (+Evaluation)</li>
+</ul>
+<h2 id="pre-processing-its-all-about-data">Pre-processing: It’s all about data</h2>
+<p>One day you wake up and think “I need to train the best <X>-to-<Y> translation model!”. First and foremost, hold your horses and check if you have access to <strong>parallel data</strong>.</p>
+<p>What is the <strong>parallel data</strong>? It a set of sentences in language X (<strong>source</strong>) and same sentence in language Y (<strong>target</strong>). In practice you need <strong>2 files: source and target data.</strong> Source file contains only sentences in the source language, one sentence per line. Each line of target file contains same sentences in target language (i.e., the same sentences have the same line number).</p>
+<pre tabindex="0"><code>Hello.
+Good morning.
+i used to be an adventurer like you, then i took an arrow in the knee.
+</code></pre><pre tabindex="0"><code>Hallo.
+Goede morgen.
+Ik was vroeger een avonturier zoals jij toen nam ik een pijl in de knie
+</code></pre><p>Where to find <strong>parallel data</strong>? There are several publicly available NMT datasets. The main purpose of such curated datasets is that evaluation and test sets are kept the same, so you can compare your results with other works.</p>
+<ul>
+<li><a href="https://www2.statmt.org/">WMT</a></li>
+<li><a href="https://github.com/Helsinki-NLP/Tatoeba-Challenge/tree/master/data">Tatoeba</a></li>
+<li>Flores <a href="https://github.com/facebookresearch/flores">https://github.com/facebookresearch/flores</a></li>
+<li><a href="https://www.notion.so/Neural-Machine-Translation-81644e5bed304c19bf3f5d4012537499">IWSLT data</a></li>
+<li><a href="https://huggingface.co/docs/datasets/index">Hugging face datasets</a></li>
+</ul>
+<p>Sometimes data comes in one csv file, sometimes it’s xml files. Then you need to parse them. I hope you know some bash. If not, just google and copy from stackoverflow.</p>
+<p>Surprisingly (no) we cannot feed raw text into the neural network. They work with <strong>numbers</strong> not words. So pre-processing aims to map text into (some) numerical representation.</p>
+<p>Pre-processing usually include:</p>
+<ul>
+<li><strong>Normalization</strong>: Tokenization, Truecasing, Filtering, (Optional) Language-specific modifications</li>
+<li><strong>Sub-tokens</strong> splitting</li>
+</ul>
+<p>There are also some framework-specific modifications, but let’s talk about it later.</p>
+<p>One <a href="https://github.com/harvardnlp/BSO/blob/master/data_prep/MT/prepareData.sh">example</a> of pre-processing pipeline:</p>
+<p><strong>Normalization</strong></p>
+<p>Tools: <a href="https://github.com/moses-smt/mosesdecoder">moses</a>, <a href="https://github.com/huggingface/tokenizers/tree/main/bindings/python">hugging face tokenizer</a> etc</p>
+<ol>
+<li><em>Tokenization</em>: Needed to split sentence into the individual tokens. E.g. split punctuations.</li>
+</ol>
+<pre tabindex="0"><code>i used to be an adventurer like you , then i took an arrow in the knee .
+</code></pre><p>You see? The main difference is that each word can be assigned an individual index.</p>
+<ol>
+<li><em>Truecasing</em>: restore capitalizeion where necessarily.</li>
+</ol>
+<pre tabindex="0"><code>I used to be an adventurer like you , then I took an arrow in the knee .
+</code></pre><p><strong>Sub-tokens splitting</strong></p>
+<p>Tools:  <a href="https://github.com/google/sentencepiece">https://github.com/google/sentencepiece</a> <a href="https://github.com/rsennrich/subword-nmt">https://github.com/rsennrich/subword-nmt</a></p>
+<p>We have already mentioned that each token can be assigned individual index. Usually it’s the index of token in vocabulary. Vocabulary can be based on training data. Typically the most frequent tokens are on top. If you do a word-level vocabulary, it can be very long (e.g. 250 000 tokens). Remember Transformer architecture. There are input embeddings layers (encoder and decoder) with dimensionality <code>VxD</code> and output layer with dimensionality <code>DxV</code>, where D is the model (or embeddings) dimension and V is the vocabulary size. Since there is <code>softmax</code> over output, the large the matrix, the slower the generation process.</p>
+<p>Also while generating it can fail on rare-words. Subword splitting prevent that and helps to avoid such cases. You can train your spm/bpe model on training data, or external data. You can also train bpe jointly on source/target.</p>
+<p>At the end, your files can look like this</p>
+<pre tabindex="0"><code>my_awesome_nmt_data
+├── test.nl-en.en
+├── test.nl-en.nl
+├── train.nl-en.en
+├── train.nl-en.nl
+├── valid.nl-en.en
+└── valid.nl-en.nl
+</code></pre><p><strong>Vocabulary</strong></p>
+<p>Vocabulary is important for NMT system. It defines how your text will be encoded and how generation process will go. With larger vocabulary you have a slower training, BUT you can generate bigger variety of tokens. It’s always about compromizes and best practices. Example of vocabulary building:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#https://github.com/rsennrich/subword-nmt/blob/master/subword_nmt/get_vocab.py#L40</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_vocab</span>(train_file, vocab_file):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    c <span style="color:#f92672">=</span> Counter()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> train_file:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> word <span style="color:#f92672">in</span> line<span style="color:#f92672">.</span>strip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74"> &#39;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39; &#39;</span>):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> word:
+</span></span><span style="display:flex;"><span>                c[word] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> key,f <span style="color:#f92672">in</span> sorted(c<span style="color:#f92672">.</span>items(), key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> x: x[<span style="color:#ae81ff">1</span>], reverse<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>        vocab_file<span style="color:#f92672">.</span>write(key<span style="color:#f92672">+</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">+</span> str(f) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p><strong>Framework-specific preprocessing</strong></p>
+<p>It might be needed to do additional step before we satrt train the model. It always depends on what you use for training your model. Fairseq requires binary-format data. And it can de prepared via <code>fairseq-preprocess</code></p>
+<pre tabindex="0"><code>fairseq-preprocess \
+    --source-lang nl --target-lang en \
+    --trainpref my_awesome_nmt_data/train.nl-en \
+		--validpref my_awesome_nmt_data/valid.nl-en \
+		--testpref my_awesome_nmt_data/test.nl-en \
+    --destdir data-bin/my_awesome_nmt_data_bin \
+		--thresholdtgt 0 --thresholdsrc --workers 20
+</code></pre><p>Fairseq will automatically build a vocabulary. You can use joint vocabulary (meaning you have the same source AND target vocabulary, and this vocabulary contains tokens from both sides) by using <code>--joined-dictionary</code> parameter, sometime it helps to boost performance.</p>
+<p>You can also make your own vocabulary and pass file to <code>fairseq-preprocess</code> using <code>--tgtdict</code> <code>--srcdict</code>. But if you need custom vocabulary, I trust you know what you are doing.</p>
+<h2 id="training">Training</h2>
+<p>Before you start training, you need to make sure you have a data (see previous step), model and criterion implemented. Do you understand what is your input and output? Do you understand your model? Do you understand criterion you optimize?</p>
+<p>I want to make this part a bit more framework-specific to show examples. But I will give some tips on how to start with a framework.</p>
+<h3 id="case-1-easy-everything-is-implemented-in-a-framework">Case 1 (easy): Everything is implemented (in a framework)</h3>
+<p>Only training parameters are your responsibility. <a href="https://github.com/facebookresearch/fairseq/blob/main/examples/translation/README.md#training-a-new-model">Example</a> from <code>fairseq</code></p>
+<p>Personally I prefer using <code>.yaml</code> configs and <code>[fairseq-hydra-train](https://github.com/facebookresearch/fairseq/blob/main/docs/hydra_integration.md)</code>  rather than <a href="https://fairseq.readthedocs.io/en/latest/command_line_tools.html">CLI training</a> . But you can do what suits you best.</p>
+<p>Example config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># @package _group_</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">task</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">_name</span>: <span style="color:#ae81ff">translation</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">data</span>: <span style="color:#ae81ff">my_awesome_nmt_data_bin</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">source_lang</span>: <span style="color:#ae81ff">nl</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">target_lang</span>: <span style="color:#ae81ff">en</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">eval_bleu</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">eval_bleu_args</span>: <span style="color:#e6db74">&#39;{&#34;beam&#34;:1}&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">eval_bleu_detok</span>: <span style="color:#ae81ff">moses</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">eval_bleu_remove_bpe</span>: <span style="color:#ae81ff">sentencepiece</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">eval_bleu_print_samples</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">criterion</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">_name</span>: <span style="color:#ae81ff">label_smoothed_cross_entropy</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">label_smoothing</span>: <span style="color:#ae81ff">0.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">model</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">_name</span>: <span style="color:#ae81ff">transformer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">decoder</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">learned_pos</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">encoder</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">learned_pos</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">dropout</span>: <span style="color:#ae81ff">0.3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">share_decoder_input_output_embed</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">optimizer</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">_name</span>: <span style="color:#ae81ff">adam</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">adam_betas</span>: <span style="color:#ae81ff">(0.9,0.98)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">lr_scheduler</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">_name</span>: <span style="color:#ae81ff">inverse_sqrt</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">warmup_updates</span>: <span style="color:#ae81ff">10000</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">warmup_init_lr</span>: <span style="color:#ae81ff">1e-07</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">dataset</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">max_tokens</span>: <span style="color:#ae81ff">8000</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">validate_interval_updates</span>: <span style="color:#ae81ff">2000</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">optimization</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">lr</span>: [<span style="color:#ae81ff">0.0005</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">update_freq</span>: [<span style="color:#ae81ff">8</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">max_update</span>: <span style="color:#ae81ff">50000</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">stop_min_lr</span>: <span style="color:#ae81ff">1e-09</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">checkpoint</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">no_epoch_checkpoints</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">best_checkpoint_metric</span>: <span style="color:#ae81ff">bleu</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maximize_best_checkpoint_metric</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">save_dir</span>: <span style="color:#ae81ff">my_awesome_model</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">common</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">wandb_project</span>: ???
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">log_format</span>: <span style="color:#ae81ff">simple</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">log_interval</span>: <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><p>then you just run</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ fairseq-hydra-train <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-dir /path/to/external/configs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-name my_awesome_config.yaml
+</span></span></code></pre></div><p>If you want to override config parameter</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ fairseq-hydra-train <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-dir /path/to/external/configs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-name my_awesome_config.yaml common.wandb_project<span style="color:#f92672">=</span>MYPROJECT
+</span></span></code></pre></div><p>if you want to add new param:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ fairseq-hydra-train <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-dir /path/to/external/configs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --config-name my_awesome_config.yaml +common.new_param<span style="color:#f92672">=</span>paramvalue
+</span></span></code></pre></div><p><strong>How to tune parameters?</strong></p>
+<p>You can of course try different combinations, however there are MANY, so it’s not feasible unless you have unlimited gpu resource.
+If we freeze data and model architecture, there are two important parameters: learning rate (and <a href="https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html#Learning-rate-warm-up">warmup schedule</a>) and batch size. Other parameters can give performance boost too of course, but these two are most likely to affect training.</p>
+<p>If you use well-known dataset, you can look up the papers that report results on it and see their hyperparameters. E.g., you can use <a href="https://paperswithcode.com/sota/machine-translation-on-iwslt2014-german">papers with code</a> to sort papers based on test sets.</p>
+<p>Tips:</p>
+<ul>
+<li>We minimize cross-entropy, meaning that loss should be going to 0. Monitor your loss curve to make sure training is correct</li>
+<li>check validation scores to get the best model</li>
+</ul>
+<h3 id="case-2-not-so-easy-you-need-to-implement-some-parts">Case 2 (not so easy): You need to implement some parts</h3>
+<p>The most exciting part. Some tips on extending <code>fairseq</code> you can find <a href="https://evgeniia.tokarch.uk/blog/extending-fairseq-incomplete-guide/">here</a>.</p>
+<h3 id="case-3-hero-mode-you-need-to-implement-everything-good-luck">Case 3 (hero mode): You need to implement everything. Good luck.</h3>
+<blockquote>
+<p>You have reached the world&rsquo;s edge, none but devils play past here</p>
+</blockquote>
+<h2 id="generation-evaluation">Generation (+Evaluation)</h2>
+<p>At this point you have your model file. You want to generate targets for source sentence in a test subset and evaluate them using automated evaluation metric. Easy.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ fairseq-generate my_awesome_data_bin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --path checkpoints/checkpoint_best.pt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --batch-size <span style="color:#ae81ff">128</span> --beam <span style="color:#ae81ff">5</span> --remove-bpe &gt; hypothesis
+</span></span></code></pre></div><p>If your subword splitting is <code>spm</code>, use <code>--remove-bpe sentencepiece</code></p>
+<p>Here comes the tricky part. You need to do post-processing, meaning the reverse process of pre-processing. Last step first. E.g., you first remove <code>truecasing</code>, then <code>tokenization</code> and only then you assess your translation using e.g.  <a href="https://github.com/mjpost/sacrebleu">https://github.com/mjpost/sacrebleu</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cat hypothesis | grep -P <span style="color:#ae81ff">\&#34;</span>^H<span style="color:#ae81ff">\&#34;</span> | sort -V | cut -f3- | $MOSES/scripts/recaser/detruecase.perl | $MOSES/scripts/tokenizer/detokenizer.perl -l <span style="color:#f92672">{</span>trg<span style="color:#f92672">}</span> &gt; eval_ready_hyps
+</span></span><span style="display:flex;"><span>$ cat eval_ready_hyps | sacrebleu target_test_file
+</span></span></code></pre></div><p>BLEU score is a common metric for automated evaluation of translation. But it’s not the best. There are <a href="https://machinetranslate.org/metrics">many other metrics</a> you can use.</p>
+<h2 id="resources">Resources</h2>
+<p><strong>Courses and tutorials:</strong></p>
+<ul>
+<li><a href="https://web.stanford.edu/class/cs224n/index.html">Stanford NLP course</a></li>
+<li><a href="https://www.youtube.com/watch?v=XeDCP0newd8&amp;list=PL8PYTP1V4I8BhCpzfdKKdd1OnTfLcyZr7&amp;index=16">CMU NLP course</a></li>
+<li><a href="https://uvadlc-notebooks.readthedocs.io/en/latest/index.html">UvA Deep Learning Tutorials!</a></li>
+</ul>
+<p><strong>Books:</strong></p>
+<ul>
+<li><a href="https://www.cambridge.org/core/books/neural-machine-translation/7AAA628F88ADD64124EA008C425C0197">Neural Machine Translation by Phillip Koehn</a></li>
+</ul>
+<p><strong>(Blog)posts</strong></p>
+<p><a href="https://github.com/neubig/nmt-tips">https://github.com/neubig/nmt-tips</a></p>
+<p><a href="https://jalammar.github.io/illustrated-transformer/">https://jalammar.github.io/illustrated-transformer/</a></p>
+<h2 id="faq"><strong>FAQ</strong></h2>
+<p>Under construction. Ask me questions, I will add them here.</p>
+
+
+<footer class="mt-auto d-flex justify-content-center text-muted small secondary_font">
+    <span class="text-muted">Copyright (c) 2023, E Tokarchuk,
+        <a class="text-muted" href="https://github.com/hadisinaee/avicenna" target="_blank"> created by Avicenna
+            (MIT)</a>
+    </span>
+</footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js"></script>
+<script>
+    feather.replace()
+</script></body>
+
+</html>
