@@ -44,7 +44,7 @@
 
 <div class="reading_time secondary_font text-muted ">
     <span>
-        Apr 4 2023 · 7 min read
+        Apr 4 2023 · 8 min read
     </span>
 
 </div>
@@ -112,18 +112,6 @@ Ik was vroeger een avonturier zoals jij toen nam ik een pijl in de knie
 <li><em>Truecasing</em>: restore capitalizeion where necessarily.</li>
 </ol>
 <pre tabindex="0"><code>I used to be an adventurer like you , then I took an arrow in the knee .
-</code></pre><p><strong>Sub-tokens splitting</strong></p>
-<p>Tools:  <a href="https://github.com/google/sentencepiece">https://github.com/google/sentencepiece</a> <a href="https://github.com/rsennrich/subword-nmt">https://github.com/rsennrich/subword-nmt</a></p>
-<p>We have already mentioned that each token can be assigned individual index. Usually it’s the index of token in vocabulary. Vocabulary can be based on training data. Typically the most frequent tokens are on top. If you do a word-level vocabulary, it can be very long (e.g. 250 000 tokens). Remember Transformer architecture. There are input embeddings layers (encoder and decoder) with dimensionality <code>VxD</code> and output layer with dimensionality <code>DxV</code>, where D is the model (or embeddings) dimension and V is the vocabulary size. Since there is <code>softmax</code> over output, the large the matrix, the slower the generation process.</p>
-<p>Also while generating it can fail on rare-words. Subword splitting prevent that and helps to avoid such cases. You can train your spm/bpe model on training data, or external data. You can also train bpe jointly on source/target.</p>
-<p>At the end, your files can look like this</p>
-<pre tabindex="0"><code>my_awesome_nmt_data
-├── test.nl-en.en
-├── test.nl-en.nl
-├── train.nl-en.en
-├── train.nl-en.nl
-├── valid.nl-en.en
-└── valid.nl-en.nl
 </code></pre><p><strong>Vocabulary</strong></p>
 <p>Vocabulary is important for NMT system. It defines how your text will be encoded and how generation process will go. With larger vocabulary you have a slower training, BUT you can generate bigger variety of tokens. It’s always about compromizes and best practices. Example of vocabulary building:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#https://github.com/rsennrich/subword-nmt/blob/master/subword_nmt/get_vocab.py#L40</span>
@@ -138,16 +126,35 @@ Ik was vroeger een avonturier zoals jij toen nam ik een pijl in de knie
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> key,f <span style="color:#f92672">in</span> sorted(c<span style="color:#f92672">.</span>items(), key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> x: x[<span style="color:#ae81ff">1</span>], reverse<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
 </span></span><span style="display:flex;"><span>        vocab_file<span style="color:#f92672">.</span>write(key<span style="color:#f92672">+</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">+</span> str(f) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
-</span></span></code></pre></div><p><strong>Framework-specific preprocessing</strong></p>
+</span></span></code></pre></div><p>The most frequent tokens usually have the lowest index. Each word can be encoded with an index of this word in vocabulary.</p>
+<pre tabindex="0"><code>I used to be an adventurer like you , then I took an arrow in the knee .
+13 300 9 40 45 1 50 16 5 85 13 401 45 1 14 7 1 6
+</code></pre><p>If the word is not in the vocabulary, it can be encoded with <code>unk</code> token (index 1 in example). Same procedere for target language.</p>
+<p><strong>Sub-tokens splitting</strong></p>
+<p>Tools:  <a href="https://github.com/google/sentencepiece">sentencepiece</a> (spm) <a href="https://github.com/rsennrich/subword-nmt">subword-nmt</a> (bpe)</p>
+<p>As you can see from example above, word-level vocabulary results into multiple <code>unknowns</code>, which called out-of-vocabulary words (OOV) in NLP literature. To reduce the amount of oov, subwords splitting was suggested <a href="https://aclanthology.org/P16-1162">Neural Machine Translation of Rare Words with Subword Units</a> (Sennrich et al., ACL 2016).</p>
+<p>You can train your spm/bpe model on training data, or external data. You can also train bpe jointly on source/target.</p>
+<pre tabindex="0"><code>I used to be an ad@@ vent@@ ur@@ er like you , then I took an ar@@ row in the k@@ nee.
+13 300 9 40 45 271 1458 716 187 50 16 5 85 13 401 45 207 1632 14 7 255 4811 6
+</code></pre><p>Amazing! With sub-words we do not have any unknowns!</p>
+<p>At the end, your files can look like this</p>
+<pre tabindex="0"><code>my_awesome_nmt_data
+├── test.nl-en.bpe.en
+├── test.nl-en.bpe.nl
+├── train.nl-en.bpe.en
+├── train.nl-en.bpe.nl
+├── valid.nl-en.bpe.en
+└── valid.nl-en.bpe.nl
+</code></pre><p><strong>Framework-specific preprocessing</strong></p>
 <p>It might be needed to do additional step before we satrt train the model. It always depends on what you use for training your model. Fairseq requires binary-format data. And it can de prepared via <code>fairseq-preprocess</code></p>
-<pre tabindex="0"><code>fairseq-preprocess \
-    --source-lang nl --target-lang en \
-    --trainpref my_awesome_nmt_data/train.nl-en \
-		--validpref my_awesome_nmt_data/valid.nl-en \
-		--testpref my_awesome_nmt_data/test.nl-en \
-    --destdir data-bin/my_awesome_nmt_data_bin \
-		--thresholdtgt 0 --thresholdsrc --workers 20
-</code></pre><p>Fairseq will automatically build a vocabulary. You can use joint vocabulary (meaning you have the same source AND target vocabulary, and this vocabulary contains tokens from both sides) by using <code>--joined-dictionary</code> parameter, sometime it helps to boost performance.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ fairseq-preprocess <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --source-lang nl --target-lang en <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --trainpref my_awesome_nmt_data/train.nl-en <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--validpref my_awesome_nmt_data/valid.nl-en <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--testpref my_awesome_nmt_data/test.nl-en <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --destdir data-bin/my_awesome_nmt_data_bin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--thresholdtgt <span style="color:#ae81ff">0</span> --thresholdsrc --workers <span style="color:#ae81ff">20</span>
+</span></span></code></pre></div><p>Fairseq will automatically build a vocabulary. You can use joint vocabulary (meaning you have the same source AND target vocabulary, and this vocabulary contains tokens from both sides) by using <code>--joined-dictionary</code> parameter, sometime it helps to boost performance.</p>
 <p>You can also make your own vocabulary and pass file to <code>fairseq-preprocess</code> using <code>--tgtdict</code> <code>--srcdict</code>. But if you need custom vocabulary, I trust you know what you are doing.</p>
 <h2 id="training">Training</h2>
 <p>Before you start training, you need to make sure you have a data (see previous step), model and criterion implemented. Do you understand what is your input and output? Do you understand your model? Do you understand criterion you optimize?</p>
@@ -218,6 +225,7 @@ Ik was vroeger een avonturier zoals jij toen nam ik een pijl in de knie
 <p>You can of course try different combinations, however there are MANY, so it’s not feasible unless you have unlimited gpu resource.
 If we freeze data and model architecture, there are two important parameters: learning rate (and <a href="https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html#Learning-rate-warm-up">warmup schedule</a>) and batch size. Other parameters can give performance boost too of course, but these two are most likely to affect training.</p>
 <p>If you use well-known dataset, you can look up the papers that report results on it and see their hyperparameters. E.g., you can use <a href="https://paperswithcode.com/sota/machine-translation-on-iwslt2014-german">papers with code</a> to sort papers based on test sets.</p>
+<p>Please also refer to <a href="https://github.com/google-research/tuning_playbook">tuning playbook</a> for general tips on tuning.</p>
 <p>Tips:</p>
 <ul>
 <li>We minimize cross-entropy, meaning that loss should be going to 0. Monitor your loss curve to make sure training is correct</li>
