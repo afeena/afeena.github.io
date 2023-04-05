@@ -134,7 +134,7 @@ Ik was vroeger een avonturier zoals jij toen nam ik een pijl in de knie
 <p>Tools:  <a href="https://github.com/google/sentencepiece">sentencepiece</a> (spm) <a href="https://github.com/rsennrich/subword-nmt">subword-nmt</a> (bpe)</p>
 <p>As you can see from example above, word-level vocabulary results into multiple <code>unknowns</code>, which called out-of-vocabulary words (OOV) in NLP literature. To reduce the amount of oov, subwords splitting was suggested <a href="https://aclanthology.org/P16-1162">Neural Machine Translation of Rare Words with Subword Units</a> (Sennrich et al., ACL 2016).</p>
 <p>You can train your spm/bpe model on training data, or external data. You can also train bpe jointly on source/target.</p>
-<pre tabindex="0"><code>I used to be an ad@@ vent@@ ur@@ er like you , then I took an ar@@ row in the k@@ nee.
+<pre tabindex="0"><code>I used to be an ad@@ vent@@ ur@@ er like you , then I took an ar@@ row in the k@@ nee .
 13 300 9 40 45 271 1458 716 187 50 16 5 85 13 401 45 207 1632 14 7 255 4811 6
 </code></pre><p>Amazing! With sub-words we do not have any unknowns!</p>
 <p>At the end, your files can look like this</p>
