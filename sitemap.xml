@@ -3,10 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://evgeniia.tokarch.uk/blog/</loc>
-    <lastmod>2023-04-04T00:00:00+00:00</lastmod>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://evgeniia.tokarch.uk/tags/conference/</loc>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://evgeniia.tokarch.uk/</loc>
-    <lastmod>2023-04-04T00:00:00+00:00</lastmod>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://evgeniia.tokarch.uk/tags/naacl/</loc>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://evgeniia.tokarch.uk/blog/naacl2024/</loc>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://evgeniia.tokarch.uk/tags/</loc>
+    <lastmod>2024-06-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://evgeniia.tokarch.uk/blog/neural-machine-translation/</loc>
     <lastmod>2023-04-04T00:00:00+00:00</lastmod>
@@ -15,9 +27,6 @@
     <lastmod>2023-04-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://evgeniia.tokarch.uk/tags/nlp/</loc>
-    <lastmod>2023-04-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://evgeniia.tokarch.uk/tags/</loc>
     <lastmod>2023-04-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://evgeniia.tokarch.uk/tags/fairseq/</loc>
